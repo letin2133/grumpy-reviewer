@@ -17,9 +17,11 @@ jobs:
       - uses: ./
         with:
           persona: grumpy-senior
-          provider: anthropic
+          provider: openai        # 9router / OpenAI-compatible
+          base-url: ${{ secrets.API_BASE_URL }}   # e.g. https://your-proxy.com/v1
+          model: ${{ secrets.MODEL_NAME }}         # e.g. gpt-4o or claude-3-5-sonnet
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   zen-master:
@@ -30,7 +32,9 @@ jobs:
       - uses: ./
         with:
           persona: zen-master
-          provider: anthropic
+          provider: openai
+          base-url: ${{ secrets.API_BASE_URL }}
+          model: ${{ secrets.MODEL_NAME }}
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
