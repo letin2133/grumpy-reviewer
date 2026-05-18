@@ -12,6 +12,7 @@ async function run(): Promise<void> {
     const provider = core.getInput('provider') || 'anthropic'
     const model = core.getInput('model') || ''
     const maxFiles = Math.max(1, parseInt(core.getInput('max-files') || '10', 10))
+    const baseUrl = core.getInput('base-url') || undefined
 
     if (!token) {
       core.setFailed('GITHUB_TOKEN is required. Set it in the workflow env or pass as github-token input.')
@@ -43,7 +44,7 @@ async function run(): Promise<void> {
     const systemPrompt = buildSystemPrompt(personaData)
 
     core.info(`Calling ${provider} for review...`)
-    const review = await reviewWithLLM({ systemPrompt, diff, provider, model })
+    const review = await reviewWithLLM({ systemPrompt, diff, provider, model, baseUrl })
 
     if (!review.summary && review.comments.length === 0) {
       core.info('LLM returned nothing. Skipping review post.')

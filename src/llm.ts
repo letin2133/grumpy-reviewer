@@ -17,6 +17,7 @@ interface ReviewOptions {
   diff: string
   provider: string
   model: string
+  baseUrl?: string
 }
 
 const REVIEW_TOOL = {
@@ -51,17 +52,18 @@ export async function reviewWithLLM(opts: ReviewOptions): Promise<ReviewResult> 
   const userMessage = `Please review this pull request diff:\n\n\`\`\`diff\n${opts.diff}\n\`\`\``
 
   if (opts.provider === 'openai') {
-    return reviewWithOpenAI(opts.systemPrompt, userMessage, opts.model)
+    return reviewWithOpenAI(opts.systemPrompt, userMessage, opts.model, opts.baseUrl)
   }
-  return reviewWithAnthropic(opts.systemPrompt, userMessage, opts.model)
+  return reviewWithAnthropic(opts.systemPrompt, userMessage, opts.model, opts.baseUrl)
 }
 
 async function reviewWithAnthropic(
   systemPrompt: string,
   userMessage: string,
   modelOverride: string,
+  baseUrl?: string,
 ): Promise<ReviewResult> {
-  const client = new Anthropic()
+  const client = new Anthropic(baseUrl ? { baseURL: baseUrl } : {})
   const model = modelOverride || 'claude-sonnet-4-6'
 
   const response = await client.messages.create({
@@ -90,8 +92,9 @@ async function reviewWithOpenAI(
   systemPrompt: string,
   userMessage: string,
   modelOverride: string,
+  baseUrl?: string,
 ): Promise<ReviewResult> {
-  const client = new OpenAI()
+  const client = new OpenAI(baseUrl ? { baseURL: baseUrl } : {})
   const model = modelOverride || 'gpt-4o'
 
   const response = await client.chat.completions.create({

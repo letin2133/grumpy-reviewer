@@ -40948,12 +40948,12 @@ const REVIEW_TOOL = {
 async function reviewWithLLM(opts) {
     const userMessage = `Please review this pull request diff:\n\n\`\`\`diff\n${opts.diff}\n\`\`\``;
     if (opts.provider === 'openai') {
-        return reviewWithOpenAI(opts.systemPrompt, userMessage, opts.model);
+        return reviewWithOpenAI(opts.systemPrompt, userMessage, opts.model, opts.baseUrl);
     }
-    return reviewWithAnthropic(opts.systemPrompt, userMessage, opts.model);
+    return reviewWithAnthropic(opts.systemPrompt, userMessage, opts.model, opts.baseUrl);
 }
-async function reviewWithAnthropic(systemPrompt, userMessage, modelOverride) {
-    const client = new sdk_1.default();
+async function reviewWithAnthropic(systemPrompt, userMessage, modelOverride, baseUrl) {
+    const client = new sdk_1.default(baseUrl ? { baseURL: baseUrl } : {});
     const model = modelOverride || 'claude-sonnet-4-6';
     const response = await client.messages.create({
         model,
@@ -40974,8 +40974,8 @@ async function reviewWithAnthropic(systemPrompt, userMessage, modelOverride) {
     }
     return { summary: '', comments: [] };
 }
-async function reviewWithOpenAI(systemPrompt, userMessage, modelOverride) {
-    const client = new openai_1.default();
+async function reviewWithOpenAI(systemPrompt, userMessage, modelOverride, baseUrl) {
+    const client = new openai_1.default(baseUrl ? { baseURL: baseUrl } : {});
     const model = modelOverride || 'gpt-4o';
     const response = await client.chat.completions.create({
         model,
@@ -41061,6 +41061,7 @@ async function run() {
         const provider = core.getInput('provider') || 'anthropic';
         const model = core.getInput('model') || '';
         const maxFiles = Math.max(1, parseInt(core.getInput('max-files') || '10', 10));
+        const baseUrl = core.getInput('base-url') || undefined;
         if (!token) {
             core.setFailed('GITHUB_TOKEN is required. Set it in the workflow env or pass as github-token input.');
             return;
@@ -41083,7 +41084,7 @@ async function run() {
         }
         const systemPrompt = (0, prompt_1.buildSystemPrompt)(personaData);
         core.info(`Calling ${provider} for review...`);
-        const review = await (0, llm_1.reviewWithLLM)({ systemPrompt, diff, provider, model });
+        const review = await (0, llm_1.reviewWithLLM)({ systemPrompt, diff, provider, model, baseUrl });
         if (!review.summary && review.comments.length === 0) {
             core.info('LLM returned nothing. Skipping review post.');
             return;

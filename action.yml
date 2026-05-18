@@ -27,6 +27,11 @@ inputs:
     required: false
     default: "10"
 
+  base-url:
+    description: "Custom API base URL (for proxy providers like 9router, OpenRouter, etc.). Leave empty for official endpoints."
+    required: false
+    default: ""
+
   github-token:
     description: "GitHub token for posting reviews. Usually secrets.GITHUB_TOKEN."
     required: false
