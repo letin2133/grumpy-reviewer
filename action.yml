@@ -1,0 +1,37 @@
+name: "GrumpyReviewer"
+description: "AI code reviewer with personality. Brutal, in-character feedback on every PR."
+author: "community"
+
+branding:
+  icon: "message-circle"
+  color: "red"
+
+inputs:
+  persona:
+    description: "Reviewer persona slug. Available: grumpy-senior, drill-sergeant, zen-master, anime-sensei, shakespeare, kernel-maintainer"
+    required: false
+    default: "grumpy-senior"
+
+  provider:
+    description: "LLM provider. Options: anthropic, openai"
+    required: false
+    default: "anthropic"
+
+  model:
+    description: "Model override. Defaults: anthropic=claude-sonnet-4-6, openai=gpt-4o"
+    required: false
+    default: ""
+
+  max-files:
+    description: "Maximum number of files to review per PR. Keeps costs predictable."
+    required: false
+    default: "10"
+
+  github-token:
+    description: "GitHub token for posting reviews. Usually secrets.GITHUB_TOKEN."
+    required: false
+    default: ${{ github.token }}
+
+runs:
+  using: "node20"
+  main: "dist/index.js"

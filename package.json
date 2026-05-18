@@ -1,0 +1,25 @@
+{
+  "name": "grumpy-reviewer",
+  "version": "1.0.0",
+  "description": "AI code reviewer with personality. Brutal feedback, technically correct.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "ncc build src/main.ts -o dist --source-map --license licenses.txt",
+    "typecheck": "tsc --noEmit",
+    "prepare": "npm run build"
+  },
+  "keywords": ["github-action", "code-review", "ai", "llm", "claude"],
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^1.10.1",
+    "@actions/github": "^6.0.0",
+    "@anthropic-ai/sdk": "^0.30.0",
+    "gray-matter": "^4.0.3",
+    "openai": "^4.77.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@vercel/ncc": "^0.38.1",
+    "typescript": "^5.4.0"
+  }
+}
